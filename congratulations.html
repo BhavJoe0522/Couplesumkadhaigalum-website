@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Congratulations!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Miniver&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+          }
+
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+          }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom right, #fff8e7, #f2d2bd);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Miniver', cursive;
+            overflow: hidden;
+            animation: fadeIn 1.5s ease;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            max-width: 90%;
+        }
+        h1 {
+            font-size: 3rem;
+            color: saddlebrown;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.5rem;
+            color: #333;
+        }
+        .home-button {
+            margin-top: 30px;
+            padding: 10px 26px;
+            color: white;
+            font-size: large;
+            font-weight: bolder;
+            background-color: black;
+            border-radius: 20px;
+            border: 1px solid black;
+            transition: 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .home-button:hover {
+            color: black;
+            background-color: transparent;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: scale(0.95);}
+            100% { opacity: 1; transform: scale(1);}
+        }
+        @media screen and (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            p { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 Congratulations! 🎉</h1>
+        <p>Our website made your day!</p>
+        <a href="index.html" class="home-button">Back to Home</a>
+    </div>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        let confettis = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function createConfetti() {
+            for (let i = 0; i < 100; i++) {
+                confettis.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    r: Math.random() * 6 + 4,
+                    d: Math.random() * 40 + 10,
+                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                    tilt: Math.random() * 10 - 5
+                });
+            }
+        }
+
+        function drawConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            confettis.forEach(c => {
+                ctx.beginPath();
+                ctx.fillStyle = c.color;
+                ctx.ellipse(c.x, c.y, c.r, c.r * 0.6, c.tilt, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+            moveConfetti();
+        }
+
+        function moveConfetti() {
+            confettis.forEach(c => {
+                c.y += c.d * 0.02;
+                c.tilt += 0.1;
+                if (c.y > canvas.height) c.y = -10;
+            });
+        }
+
+        function animate() {
+            drawConfetti();
+            requestAnimationFrame(animate);
+        }
+
+        createConfetti();
+        animate();
+
+        // Auto stop confetti after 10 seconds
+        setTimeout(() => {
+            cancelAnimationFrame(animate);
+        }, 10000);
+    </script>
+</body>
+</html>
